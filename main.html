@@ -35,7 +35,52 @@
   </div>
 
 <script>
-//Your code goes here 
+//Your code goes here
+let draggedItem = null;
+let offsetX = 0;
+let offsetY = 0;
+
+const container = document.querySelector('.items');
+const items = document.querySelectorAll('.item');
+
+items.forEach(item => {
+  item.style.position = 'absolute'; // Required for manual positioning
+  const rect = item.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  item.style.left = `${rect.left - containerRect.left}px`;
+  item.style.top = `${rect.top - containerRect.top}px`;
+
+  item.addEventListener('mousedown', (e) => {
+    draggedItem = item;
+    offsetX = e.clientX - item.offsetLeft;
+    offsetY = e.clientY - item.offsetTop;
+    item.style.zIndex = 1000; // Bring item to front
+  });
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (draggedItem) {
+    const containerRect = container.getBoundingClientRect();
+
+    let x = e.clientX - containerRect.left - offsetX;
+    let y = e.clientY - containerRect.top - offsetY;
+
+    // Constrain within container
+    x = Math.max(0, Math.min(container.clientWidth - draggedItem.offsetWidth, x));
+    y = Math.max(0, Math.min(container.clientHeight - draggedItem.offsetHeight, y));
+
+    draggedItem.style.left = `${x}px`;
+    draggedItem.style.top = `${y}px`;
+  }
+});
+
+document.addEventListener('mouseup', () => {
+  if (draggedItem) {
+    draggedItem.style.zIndex = 1;
+    draggedItem = null;
+  }
+});
+
 </script>
 
   </body>
